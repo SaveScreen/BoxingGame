@@ -27,35 +27,20 @@ public class InputManagerScript : MonoBehaviour
     }
 
     public void OnLeftPunch(InputAction.CallbackContext context) {
-        if (playerScript.isBlocking == false) {
-            if (context.started) {
-                playerScript.Punch(true);
-            }
-            if (context.canceled) {
-                playerScript.ResetPunch(true); 
-            }
+        if (context.started) {
+            playerScript.Punch(true);
         }
-        else {
-           if (context.started) {
-                playerScript.Punch(true);
-            }
-            if (context.canceled) {
-                playerScript.ResetPunch(true);
-            } 
+        if (context.canceled) {
+            playerScript.ResetPunch(true); 
         }
-        
     }
 
     public void OnRightPunch(InputAction.CallbackContext context) {
         if (context.started) {
-            if (!playerScript.isRightPunching) {
-                playerScript.Punch(false);
-            }
+            playerScript.Punch(false);
         }
         if (context.canceled) {
-            if (playerScript.isRightPunching) {
-                playerScript.ResetPunch(false);
-            }
+            playerScript.ResetPunch(false);
         }
     }
 

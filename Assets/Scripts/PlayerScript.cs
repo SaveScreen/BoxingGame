@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    public GameObject opponent;
+    private OpponentScript opponentScript;
     private Animator animator;
     public int animationState; //1 for dodging, 2 for punching
     [HideInInspector] public bool isPunching;
@@ -12,13 +15,15 @@ public class PlayerScript : MonoBehaviour
     [HideInInspector] public bool isLeftPunching;
     [HideInInspector] public bool isRightPunching;
     [HideInInspector] public bool isBlocking;
-    private bool isTransitioning;
-    private bool waitUntilTransitioningisDone;
+    [SerializeField] private GameObject basemodel;
+    private Vector3 startingposition;
 
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
+        opponentScript = opponent.GetComponent<OpponentScript>();
+        
 
         isPunching = false;
         isLeftDodging = false;
@@ -26,11 +31,20 @@ public class PlayerScript : MonoBehaviour
         isLeftPunching = false;
         isRightPunching = false;
         isBlocking = false;
+        startingposition = basemodel.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (animationState == 2) {
+            if (isLeftPunching) {
+                opponentScript.Attacked(true);
+            }
+            else if (isRightPunching) {
+                opponentScript.Attacked(false);
+            }
+        }
         
     }
 
@@ -53,6 +67,7 @@ public class PlayerScript : MonoBehaviour
 
     public void ResetDodge() {
         animator.SetFloat("Dodge", 0);
+        transform.position = startingposition;
     }
 
     public void Punch(bool leftpunch) {
@@ -94,7 +109,7 @@ public class PlayerScript : MonoBehaviour
         }
         animator.SetInteger("Punch", 0);
         animationState = 0;
-        
+        basemodel.transform.position = startingposition;
     }
 
     public void ResetJab(bool leftpunch) {
@@ -106,6 +121,7 @@ public class PlayerScript : MonoBehaviour
         }
         animator.SetInteger("Punch", 0);
         animationState = 0;
+        basemodel.transform.position = startingposition;
     }
 
     public void Duck() {
@@ -114,6 +130,7 @@ public class PlayerScript : MonoBehaviour
 
     public void ResetDuck() {
         animator.SetBool("Duck", false);
+        basemodel.transform.position = startingposition;
     }
 
     public void Block() {
@@ -124,6 +141,7 @@ public class PlayerScript : MonoBehaviour
     public void ResetBlock() {
         animator.SetBool("Block",false);
         isBlocking = false;
+        basemodel.transform.position = startingposition;
     }
 
 }
